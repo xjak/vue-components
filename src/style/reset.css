@@ -1,0 +1,70 @@
+html, body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input, textarea, th, td, select {
+    margin: 0;
+    padding: 0;
+}
+*{  
+    -webkit-appearance: none; 
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+    box-sizing: border-box;
+}
+html{   
+    font-size: 10px;
+}
+body {
+    min-height: 100%;
+    font-family: 'PingFang SC', "Microsoft YaHei";
+    background: #f7f7f7;
+}
+h1, h2, h3, h4, h5, h6{font-weight:normal;}
+ul,ol {
+    list-style: none;
+}
+img {
+    border: none;
+    vertical-align: middle;
+    -webkit-touch-callout: default;
+}
+a {
+    text-decoration: none;
+    color: #222;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+input, textarea {
+    outline: none;
+    border: none;
+    background: rgba(255, 255, 255, 0)
+}
+textarea {
+    resize: none;
+    overflow: auto;
+}
+.left{
+	float: left;
+}
+.right{
+	float: right;
+}
+.clearfix {
+    zoom: 1;
+}
+.clearfix:after {
+    content: "";
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    display: block;
+    clear: both;
+    overflow: hidden;
+}
+input{
+    font-size: 15px;
+    -webkit-appearance: none;
+    outline: none;
+    border-radius: 0;
+}
+input::-webkit-input-placeholder { 
+    font-size: 15px;
+    color: #dcdcdc;
+    font-weight: normal;
+}
