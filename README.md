@@ -2,6 +2,8 @@
 
 > A Vue.js project
 
+[Demo](https://xjak.github.io)
+
 ## Build Setup
 
 ``` bash
