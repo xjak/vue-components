@@ -1,7 +1,7 @@
 <template>
 <div>
 	<topTitle></topTitle>
-	<citySelect></citySelect>
+	<citySelect :title="'城市选择'"></citySelect>
 </div>
 </template>
 

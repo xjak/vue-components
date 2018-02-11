@@ -3,13 +3,10 @@
 * v18.1.23
 **/
 
-// this 改变通过包装函数传递this改变指向
 export default class Picker {
 	constructor(opt) {
 		this.opt = opt
-		this.el = opt.el
-		this.nowIndex = 0
-		this.time = 0
+		this.thisIndex = 0
 		this.index = []
 		this._init()
 	}
@@ -22,130 +19,130 @@ export default class Picker {
 	_addEvent() {
 		let me = this
 		// 背景禁止滑动
-		this.el.addEventListener('touchmove', (e) => {
+		this.opt.el.addEventListener('touchmove', (e) => {
 			e.preventDefault()
 		}, false)
-
-		this.el.querySelector('.picker-cancel').addEventListener('click', () => {
-			this.el.style.display = 'none'
+		this.scrollList = this.opt.el.querySelectorAll('.picker-scroll')
+		this.opt.el.querySelector('.picker-cancel').addEventListener('click', () => {
 			this._closeAnimation()
 		}, false)
 
-		this.el.querySelector('.picker-confirm').addEventListener('click', () => {
+		this.opt.el.querySelector('.picker-confirm').addEventListener('click', () => {
 			let arr = []
-			for (let i = 0; i < this.scrollList.length; i++) {
-				arr.push(this.scrollList[i].querySelectorAll('li')[this.index[i].index].innerText)
+			for (let y = 0; y < this.scrollList.length; y++) {
+				let text = this.scrollList[y].querySelectorAll('li')
+				if (text[0]) arr.push(text[this.index[y].index].innerText)
 			}
 			this.opt.select(arr)
 			this._closeAnimation()
 		}, false)
 
-		this.scrollList = this.el.querySelectorAll('.picker-scroll')
-		let interval = 0,
+		let timing = 0,
 			startY = 0,
 			endY = 0
 		for (let i = 0; i < this.scrollList.length; i++) {
 			this.index[i] = {
-				startY: 0,
-				selfY: 0,
 				index: 0,
 				pageY: 0
 			}
 			this.scrollList[i].index = i
 			this.scrollList[i].addEventListener('touchstart', function(e) {
 				e.preventDefault()
-				interval = Date.now()
-				me.nowIndex = this.index
+				timing = Date.now()
+				me.thisIndex = this.index
 				startY = e.touches[0].clientY
 				endY = me.index[this.index].pageY
 			})
 
 			this.scrollList[i].addEventListener('touchmove', function(e) {
 				e.preventDefault()
-				me.index[this.index].pageY = e.touches[0].clientY - startY + endY
-				me._scrollTo(0, me.index[this.index].pageY)
+				me.index[me.thisIndex].pageY = e.touches[0].clientY - startY + endY
+				me._scrollTo(0, me.index[me.thisIndex].pageY)
 			}, false)
 
 			this.scrollList[i].addEventListener('touchend', function(e) {
 				e.preventDefault()
-				interval = Date.now() - interval
-				endY = me.index[this.index].pageY
-				let move = (Math.abs(endY - startY) / interval).toFixed(2)
-				let time = (endY - startY) < 0 ? -move : move
-				if (interval < 300) {
-					me.index[this.index].pageY += time * 400
+				timing = Date.now() - timing
+				let scroll = me.index[me.thisIndex]
+				// 缓动时间
+				let time = 0.5
+				if (timing < 300) {
+					let move = (Math.abs(endY - scroll.pageY) / timing).toFixed(2)
+					time = scroll.pageY < endY ? -move : move
+					scroll.pageY += time * 400
 					time = Math.abs(time)
 					time = time > 1.4 ? 1.4 : time
-				} else {
-					me.index[this.index].pageY += time * 50
-					time = 0.5
 				}
-
-				let height = me.scrollList[me.nowIndex].offsetHeight - 36
-				let pageY = me.index[me.nowIndex].pageY
-				if (pageY < 0) {
-					pageY = pageY < -height ? -height : pageY
+				// 边界限制
+				let height = me.scrollList[me.thisIndex].offsetHeight - 36
+				if (scroll.pageY < 0) {
+					if (scroll.pageY < -height) scroll.pageY =  -height
 				} else {
-					pageY = pageY > 0 ? 0 : pageY
+					if (scroll.pageY > 0) scroll.pageY = 0
 				}
-				me.index[me.nowIndex].index = Math.abs(Math.round(pageY / 36))
-				let mo = - me.index[me.nowIndex].index * 36
-				me._scrollTo(time, mo)
+				scroll.index = Math.abs(Math.round(scroll.pageY / 36))
+				scroll.pageY = endY = -scroll.index * 36
+				me._scrollTo(time, endY)
 			} ,false)
 		}
 		this._initScroll()
 	}
 	
-	// 初始索引
+	// 初始化位置
 	_initScroll() {
-		console.log(this.opt.index)
 		if (this.opt.index) {
 			for (let i = 0; i < this.scrollList.length; i++) {
-				this.nowIndex = i
-				this.index[i].index = this.opt.index[i]
-				this.index[i].selfY = -this.opt.index[i] * 36
-				this.scrollList[i].querySelectorAll('li')[this.opt.index[i]].style.color = this.opt.color
-				this._scrollTo(0)
+				if (this.scrollList[i].querySelectorAll('li')[0]) {
+					this.thisIndex = i
+					this.index[i].index = this.opt.index[i]
+					this.index[i].pageY = -this.opt.index[i] * 36
+					this.scrollList[i].querySelectorAll('li')[this.opt.index[i]].style.color = this.opt.color
+					this._scrollTo(0, this.index[i].pageY)
+				}
 			}
 		} else {
 			for (let i = 0; i < this.scrollList.length; i++) {
-				this.scrollList[i].querySelectorAll('li')[0].style.color = this.opt.color
+				let list = this.scrollList[i].querySelectorAll('li')
+				if (list[0]) list[0].style.color = this.opt.color
 			}
 		}
-		console.log(this.index)
 	}
 
 	show() {
-		this.el.style.display = 'block'
+		this.opt.el.style.display = 'block'
 		this._loadAnimation()
 	}
 
 	// 刷新
-	refresh(title) {
-		this.selfY = 0
-		this._scrollTo(0)
-		title && (this.el.querySelector('h2').innerText = title)
+	refresh(index) {
+		this.scrollList = this.opt.el.querySelectorAll('.picker-scroll')
+		this.thisIndex = index
+		this.index[index].pageY = 0
+		this.index[index].index = 0
+		this._scrollTo(0.01, 0)
 	}
 
 	_scrollTo(time, move) {
-		let index = this.scrollList[this.nowIndex]
+		let index = this.scrollList[this.thisIndex]
 		index.style.transitionTimingFunction =  'cubic-bezier(0.1, 0.57, 0.1, 1)'
 		index.style.transitionDuration = time + 's'
 		index.style.transform = 'translate3d(0,' + move + 'px,0)'
 	}
 
 	_loadAnimation() {
-		this.el.style.display = 'block'
+		this.opt.el.style.display = 'block'
 		setTimeout(() => {
-			this.el.style.background = 'rgba(0,0,0,.5)'
-			this.el.querySelector('.picker-panel').style.transform = 'translateY(0)'
+			this.opt.el.style.background = 'rgba(0,0,0,.5)'
+			this.opt.el.querySelector('.picker-panel').style.transform = 'translateY(0)'
 		}, 30)
 	}
 
 	_closeAnimation() {
-		this.el.style.display = 'none'
-		this.el.style.background = 'rgba(0,0,0,0)'
-		this.el.querySelector('.picker-panel').style.transform = 'translateY(200px)'
+		this.opt.el.style.background = 'rgba(0,0,0,0)'
+		this.opt.el.querySelector('.picker-panel').style.transform = 'translateY(200px)'
+		setTimeout(() => {
+			this.opt.el.style.display = 'none'
+		}, 400)
 	}
 
 	_transitionEnd() {
@@ -161,7 +158,7 @@ export default class Picker {
 		for (let x = 0; x < this.scrollList.length; x++) {
 			this.scrollList[x].addEventListener(style, function() {
 				this.style.transitionDuration = '0s'
-				me.opt.change && me.opt.change(this.index)
+				me.opt.change && me.opt.change(this.index, me.index)
 		 		me.opt.color && me._removeStyle(this.index)
 		 	}, false)
 		}
@@ -175,6 +172,6 @@ export default class Picker {
 				break
 			}
 		}
-		list[this.index[index].index].style.color = this.opt.color
+		if (list[this.index[index].index]) list[this.index[index].index].style.color = this.opt.color
 	}
 }

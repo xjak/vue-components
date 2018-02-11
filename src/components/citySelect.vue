@@ -1,13 +1,12 @@
 <template>
 <div >
-    <topTitle></topTitle>
     <input type="text" placeholder="请选择" ref="input" v-model="x" onfocus="this.blur()">
     <div class="picker" ref="picker">
     	<div class="picker-panel">
     		<div class="picker-content">
     			<div class="choose-hook">
     				<span class="picker-cancel left">取消</span>
-    				<h2>着我那</h2>
+    				<h2>{{title}}</h2>
     				<span class="picker-confirm right">确定</span>
     			</div>
     			<div class="wheel-hook">
@@ -29,7 +28,6 @@
 </template>
 
 <script>
-import topTitle from './title'
 import Picker from '../config/scroll'
 import city from '../config/cityList'
 export default {
@@ -41,8 +39,11 @@ export default {
         	x: ''
         }
     },
-    components: {
-        topTitle
+    props: ['title'],
+    created() {
+    	this.city = this.getCity(2)
+    	this.area = this.getArea(2, 0)
+    	console.log(this.area)
     },
     methods: {
     	getCity(s) {
@@ -62,26 +63,28 @@ export default {
 			return arr
 		}
     },
-    created() {
-    	this.city = this.getCity(6)
-    	this.area = this.getArea(6, 0)
-    	console.log()
-    },
     mounted() {
-    	let el = this.$refs.picker
     	let picker = new Picker({
-    		el: el,
-    		index: [12, 3, 2],
+    		el: this.$refs.picker,
+    		index: [2, 0, 0],
     		color: '#23948e',
-    		select: (vl) => {
-    			console.log(vl)
-    			// picker.refresh('hahaha')
+    		select: (val) => {
+    			console.log(val)
+    			this.x = val[0] + '-' + val[1] + (val[2] ? '-' + val[2] : '')
     		},
-    		change: (vl) => {
-    			console.log(picker)
+    		change: (index, list) => {
+    			if (index === 0) {
+    				this.city = this.getCity(list[0].index)
+    				picker.refresh(1)
+    				this.area = this.getArea(list[0].index, 0)
+    				picker.refresh(2)
+    			}
+    			if (index === 1) {
+    				this.area = this.getArea(list[0].index, list[1].index)
+    				picker.refresh(2)
+    			}
     		}
     	})
-    	console.log(picker)
     	this.$refs.input.addEventListener('click', () => {
     		picker.show()
     	})
@@ -174,10 +177,13 @@ input{
 					margin-top: 70px;
 					width: 33%;
 					li{
+						text-overflow:ellipsis;
+						overflow: hidden;
+						white-space: nowrap;
 						width: 100%;
 						line-height: 36px;
 						height: 36px;
-						color: #333;
+						color: #999;
 					}
 				}
 			}
