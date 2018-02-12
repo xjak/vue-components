@@ -1,17 +1,22 @@
 <template>
 <div>
 	<topTitle></topTitle>
-	<citySelect></citySelect>
+	<timeSelect @callback="callback" :title="'请选择日期'"></timeSelect>
 </div>
 </template>
 
 <script>
 import topTitle from '../components/title'
-import citySelect from '../components/citySelect'
+import timeSelect from '../components/timeSelect'
 export default {
 	components: {
 		topTitle,
-		citySelect
+		timeSelect
+	},
+	methods: {
+		callback(val) {
+			console.log(val)
+		}
 	}
 }
 </script>
