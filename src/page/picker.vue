@@ -1,17 +1,27 @@
 <template>
 <div>
 	<topTitle></topTitle>
-	<citySelect></citySelect>
+	<picker :list="list" @callback="callback" :title="'请选择'" :tip="'选择'"></picker>
 </div>
 </template>
 
 <script>
 import topTitle from '../components/title'
-import citySelect from '../components/citySelect'
+import picker from '../components/picker'
 export default {
 	components: {
 		topTitle,
-		citySelect
+		picker
+	},
+	data() {
+		return {
+			list: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天']
+		}
+	},
+	methods: {
+		callback(val) {
+			console.log(val)
+		}
 	}
 }
 </script>

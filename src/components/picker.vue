@@ -1,19 +1,18 @@
 <template>
 <div >
-    <topTitle></topTitle>
-    <input type="text" placeholder="请选择" ref="input" v-model="x" onfocus="this.blur()">
+    <input type="text" :placeholder="placeholder" ref="input" v-model="text" onfocus="this.blur()">
     <div class="picker" ref="picker">
     	<div class="picker-panel">
     		<div class="picker-content">
     			<div class="choose-hook">
     				<span class="picker-cancel left">取消</span>
-    				<h2>picker</h2>
+    				<h2>{{title}}</h2>
     				<span class="picker-confirm right">确定</span>
     			</div>
     			<div class="wheel-hook">
     				<i></i>
     				<ul class="picker-scroll">
-    					<li v-for="i in l">--{{i}}--</li>
+    					<li v-for="i in lists">{{i}}</li>
     				</ul>
     			</div>
     		</div>
@@ -23,39 +22,31 @@
 </template>
 
 <script>
-import topTitle from './title'
 import Picker from '../config/scroll'
 export default {
     data () {
         return {
-        	l: 10,
-        	x: ''
+        	lists: this.list,
+        	text: '',
+        	placeholder: this.tip || '请选择'
         }
     },
-    components: {
-        topTitle
-    },
-    methods: {
-    	scroll(e) {
-    		console.log(e)
+    props: ['title', 'list', 'tip'],
+    watch: {
+    	list() {
+    		this.lists = this.list
     	}
     },
     mounted() {
-    	let el = this.$refs.picker
     	let picker = new Picker({
-    		el: el,
-    		// index: 1,
+    		el: this.$refs.picker,
+    		index: [new Date().getDay() - 1],
     		color: '#23948e',
-    		select: (vl) => {
-    			console.log(vl)
-    			this.x = vl
-    			picker.refresh('hahaha')
-    		},
-    		scrollChange: (vl) => {
-    			console.log('picker ' + vl)
+    		select: (val) => {
+    			this.text = val
+    			this.$emit('callback', val)
     		}
     	})
-    	console.log(picker)
     	this.$refs.input.addEventListener('click', () => {
     		picker.show()
     	})
