@@ -1,6 +1,6 @@
 # cli
 
-> A Vue.js project
+> Vue.js project
 
 [Demo](https://xjak.github.io)
 
