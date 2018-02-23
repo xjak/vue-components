@@ -172,4 +172,3 @@
 		global.PageSwitch = PageSwitch
 	}
 }(this))
->>>>>>> dev
