@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-pageSwitch.js
-=======
 /***
 * pageSwitch v1.0.0
 * el		 element
