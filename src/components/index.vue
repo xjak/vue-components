@@ -27,7 +27,8 @@ export default {
                 'downRefresh',
                 'keyboard',
                 'pictureView',
-                'upLoad'
+                'upLoad',
+                'scroll'
             ]
         }
     }

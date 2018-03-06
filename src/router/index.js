@@ -14,6 +14,7 @@ const upRefresh = resolve => require(['../page/upRefresh'], resolve)
 const downRefresh = resolve => require(['../page/downRefresh'], resolve)
 const pictureView = resolve => require(['../page/pictureView'], resolve)
 const pageSwitch = resolve => require(['../page/pageSwitch'], resolve)
+const scroll = resolve => require(['../page/scroll'], resolve)
 
 // 打包到一个块中
 // const claim = r => require.ensure([], () => r(require('@/components/page/claim-guide')), 'page')
@@ -59,6 +60,9 @@ export default new Router({
         }, {
             path: '/pageSwitch',
             component: pageSwitch
+        }, {
+            path: '/scroll',
+            component: scroll
         }
     ]
 })
