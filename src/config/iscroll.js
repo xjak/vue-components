@@ -34,7 +34,6 @@ export default class Iscroll {
 		this.el.addEventListener('touchmove', e => {
 			moveY = e.changedTouches[0].pageY  - stratY + endY
 			this.moveTo(moveY)
-			//console.log(moveY)
 		}, false)
 
 		this.el.addEventListener('touchend', e => {
